@@ -21,5 +21,19 @@ trigger:
 pool:
   vmImage: ubuntu-latest
   
-steps:
-- script: echo Hello, world!
+jobs:
+- job: build
+  displayName: Build
+  steps:
+
+  - task: CmdLine@2
+    displayName: 'Move .env file'
+    inputs:
+      script: mv $(Build.SourcesDirectory)/.env.example $(Build.SourcesDirectory)/.env
+
+  - task: DockerCompose@0
+    displayName: Run Docker-compose-up
+    inputs:
+      containerregistrytype: Container Registry
+      dockerComposeFile: $(Build.SourcesDirectory)/docker-compose.yaml
+      dockerComposeCommand: 'up -d'
